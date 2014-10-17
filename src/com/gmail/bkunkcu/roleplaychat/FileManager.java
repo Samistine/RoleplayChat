@@ -31,10 +31,15 @@ public class FileManager {
 		mirrors.clear();
 		
 		File config = new File(plugin.getDataFolder(), "config.yml");
+		File config2 = new File(plugin.getDataFolder(), "filter.yml");
 		
 		if(!config.exists()) {
 			plugin.getDataFolder().mkdir();
 			copy(plugin.getResource("config.yml"), config);
+		}
+		
+		if(!config2.exists()) {
+			copy(plugin.getResource("filter.yml"), config2);
 		}
 		
 		else {

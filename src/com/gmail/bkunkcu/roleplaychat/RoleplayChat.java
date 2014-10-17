@@ -1,8 +1,11 @@
 package com.gmail.bkunkcu.roleplaychat;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,8 +24,10 @@ public class RoleplayChat extends JavaPlugin implements Listener {
 	public DatabaseManager DatabaseManager = new DatabaseManager(this);
 	public NicknameManager NicknameManager = new NicknameManager(this);
 	public MessageBuilder MessageBuilder = new MessageBuilder(this);
+	public List<String> wordList = new ArrayList<String>();
 	
 	YamlConfiguration yml = new YamlConfiguration();
+	YamlConfiguration yml2 = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "filter.yml"));
 	
 	@Override
 	public void onEnable() {	
@@ -32,6 +37,8 @@ public class RoleplayChat extends JavaPlugin implements Listener {
 		FileManager.getFiles();
 		DatabaseManager.open();
 		NicknameManager.getIntegration();
+		
+	    loadWords();
 	}
 	
 	@Override
@@ -73,6 +80,17 @@ public class RoleplayChat extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
+		// begin swear filter
+	    String chat = event.getMessage();
+	    String result = chat.replaceAll("[-+.^:,!*%$£|/]", "");
+	    String result2 = result.replaceAll(" ", "");
+	    for (String sword : this.wordList) {
+	        if (result2.toLowerCase().contains(sword)) {
+	        	event.getPlayer().kickPlayer(ChatColor.AQUA + "Nope, thats not in my dictionary");
+	      }
+	    }
+	    //end swear filter
+		
 		Player player = event.getPlayer();
 		String world = getExactWorld(player.getWorld().getName());
 		
@@ -101,4 +119,12 @@ public class RoleplayChat extends JavaPlugin implements Listener {
 			}
 		}
 	}	
+	
+	
+	public void loadWords() {
+		this.wordList = yml2.getStringList("Words");
+	}
+	
+	
+	
 }
