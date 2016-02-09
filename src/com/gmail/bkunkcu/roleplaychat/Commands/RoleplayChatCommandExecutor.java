@@ -64,7 +64,6 @@ public class RoleplayChatCommandExecutor implements CommandExecutor {
             }
         }
 
-        player = null;
         return true;
     }
 
