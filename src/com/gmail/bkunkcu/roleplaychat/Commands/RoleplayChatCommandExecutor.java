@@ -28,6 +28,7 @@ public class RoleplayChatCommandExecutor implements CommandExecutor {
         this.commands.put("nick", new NickCommand(this.plugin));
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         Player player = null;
 
