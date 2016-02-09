@@ -40,12 +40,7 @@ public class DatabaseManager {
     }
 
     private boolean isOpen() {
-        if (connection != null) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return connection != null;
     }
 
     private void createTable() {
