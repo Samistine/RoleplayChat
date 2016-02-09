@@ -87,6 +87,7 @@ public class RoleplayChat extends JavaPlugin implements Listener {
 	    for (String sword : this.wordList) {
 	        if (result2.toLowerCase().contains(sword)) {
 	        	event.getPlayer().kickPlayer(ChatColor.AQUA + "Nope, thats not in my dictionary");
+	        	return;
 	      }
 	    }
 	    //end swear filter
