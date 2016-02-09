@@ -37,7 +37,7 @@ public class RoleplayChatCommandExecutor implements CommandExecutor {
         }
 
         if (commandLabel.equalsIgnoreCase("roleplaychat") || commandLabel.equalsIgnoreCase("rc")) {
-            if (args.length < 1 || args == null) {
+            if (args.length < 1) {
                 sender.sendMessage(ChatColor.DARK_AQUA + "RoleplayChat is coded by Bkunkcu! Version: " + plugin.getDescription().getVersion());
             } else if (args[0].equalsIgnoreCase("help")) {
                 getHelp(sender, player);
