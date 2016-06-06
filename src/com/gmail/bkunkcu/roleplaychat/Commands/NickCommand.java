@@ -8,7 +8,7 @@ import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
 public class NickCommand implements RoleplayChatCommand {
 
-    private RoleplayChat plugin;
+    private final RoleplayChat plugin;
 
     public NickCommand(RoleplayChat plugin) {
         this.plugin = plugin;

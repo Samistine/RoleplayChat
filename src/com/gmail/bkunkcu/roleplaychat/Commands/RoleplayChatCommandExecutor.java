@@ -12,16 +12,11 @@ import org.bukkit.entity.Player;
 
 public class RoleplayChatCommandExecutor implements CommandExecutor {
 
-    private RoleplayChat plugin;
-    private HashMap<String, RoleplayChatCommand> commands;
+    private final RoleplayChat plugin;
+    private final HashMap<String, RoleplayChatCommand> commands = new HashMap<>();
 
     public RoleplayChatCommandExecutor(RoleplayChat plugin) {
         this.plugin = plugin;
-        getCommands();
-    }
-
-    private void getCommands() {
-        this.commands = new HashMap<String, RoleplayChatCommand>();
 
         this.commands.put("reload", new ReloadCommand(this.plugin));
         this.commands.put("spy", new SpyCommand(this.plugin));
@@ -46,18 +41,16 @@ public class RoleplayChatCommandExecutor implements CommandExecutor {
 
                 if (command.isPlayerOnly() && player == null) {
                     sender.sendMessage(ChatColor.DARK_RED + "Only players can use this command");
-                } else {
-                    if (plugin.hasPermission(player, command.getPermission())) {
-                        try {
-                            command.onCommand(sender, player, args);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                } else if (plugin.hasPermission(player, command.getPermission())) {
+                    try {
+                        command.onCommand(sender, player, args);
+                    } catch (Exception e) {
+                        e.printStackTrace();
 
-                            sender.sendMessage(ChatColor.DARK_RED + "There is an error occurred while performing this command. Please contact with server administrator");
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.DARK_RED + "You don't have permissions to use this command");
+                        sender.sendMessage(ChatColor.DARK_RED + "There is an error occurred while performing this command. Please contact with server administrator");
                     }
+                } else {
+                    sender.sendMessage(ChatColor.DARK_RED + "You don't have permissions to use this command");
                 }
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "Couldn't find this command! For help: /rc help");

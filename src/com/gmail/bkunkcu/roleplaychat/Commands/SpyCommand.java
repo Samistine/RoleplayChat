@@ -8,7 +8,7 @@ import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
 public class SpyCommand implements RoleplayChatCommand {
 
-    private RoleplayChat plugin;
+    private final RoleplayChat plugin;
 
     public SpyCommand(RoleplayChat plugin) {
         this.plugin = plugin;

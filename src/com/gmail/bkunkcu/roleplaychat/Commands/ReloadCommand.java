@@ -8,7 +8,7 @@ import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
 public class ReloadCommand implements RoleplayChatCommand {
 
-    private RoleplayChat plugin;
+    private final RoleplayChat plugin;
 
     public ReloadCommand(RoleplayChat plugin) {
         this.plugin = plugin;
