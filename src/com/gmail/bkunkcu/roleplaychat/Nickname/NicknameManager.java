@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +20,7 @@ public class NicknameManager {
 
     private GroupManager groupManager;
     private RoleplayChat plugin;
+    private Server server;
     private String integration;
 
     public NicknameManager(RoleplayChat plugin) {
@@ -131,26 +132,24 @@ public class NicknameManager {
             }
 
             if (plugin.getConfig().getBoolean("settings.logging.console")) {
-                Bukkit.getConsoleSender().sendMessage("Player " + username + "'s nickname has changed to " + nickname);
+                server.getConsoleSender().sendMessage("Player " + username + "'s nickname has changed to " + nickname);
             }
 
-            if (player == Bukkit.getPlayerExact(username)) {
+            if (player == server.getPlayerExact(username)) {
                 player.sendMessage("Your nickname has changed to " + ChatColor.GOLD + nickname);
             } else {
                 if (player != null) {
                     player.sendMessage("Player " + ChatColor.GOLD + username + ChatColor.RESET + "'s nickname has changed to " + ChatColor.GOLD + nickname);
                 }
 
-                if (Bukkit.getPlayerExact(username) != null) {
-                    Bukkit.getPlayerExact(username).sendMessage("Your nickname has changed to " + ChatColor.GOLD + nickname);
+                if (server.getPlayerExact(username) != null) {
+                    server.getPlayerExact(username).sendMessage("Your nickname has changed to " + ChatColor.GOLD + nickname);
                 }
             }
+        } else if (player != null) {
+            player.sendMessage("Nicknames should less than 20 characters and only contains a-zA-Z0-9");
         } else {
-            if (player != null) {
-                player.sendMessage("Nicknames should less than 20 characters and only contains a-zA-Z0-9");
-            } else {
-                Bukkit.getConsoleSender().sendMessage("Nicknames should less than 20 characters and only contains a-zA-Z0-9");
-            }
+            server.getConsoleSender().sendMessage("Nicknames should less than 20 characters and only contains a-zA-Z0-9");
         }
     }
 
@@ -172,30 +171,28 @@ public class NicknameManager {
 
         if (i == true) {
             if (plugin.getConfig().getBoolean("settings.logging.console")) {
-                Bukkit.getConsoleSender().sendMessage("Player " + username + " is no longer using a nickname");
+                server.getConsoleSender().sendMessage("Player " + username + " is no longer using a nickname");
             }
 
-            if (player == Bukkit.getPlayerExact(username)) {
+            if (player == server.getPlayerExact(username)) {
                 player.sendMessage("You are no longer using a nickname");
             } else {
                 if (player != null) {
                     player.sendMessage("Player " + ChatColor.GOLD + username + ChatColor.RESET + " is no longer using a nickname");
                 }
 
-                if (Bukkit.getPlayerExact(username) != null) {
-                    Bukkit.getPlayerExact(username).sendMessage("You are no longer using a nickname");
+                if (server.getPlayerExact(username) != null) {
+                    server.getPlayerExact(username).sendMessage("You are no longer using a nickname");
                 }
+            }
+        } else if (player != null) {
+            if (server.getPlayerExact(username) == player) {
+                player.sendMessage("You are not using a nickname");
+            } else {
+                player.sendMessage("Player " + ChatColor.GOLD + username + ChatColor.RESET + " is not using a nickname");
             }
         } else {
-            if (player != null) {
-                if (Bukkit.getPlayerExact(username) == player) {
-                    player.sendMessage("You are not using a nickname");
-                } else {
-                    player.sendMessage("Player " + ChatColor.GOLD + username + ChatColor.RESET + " is not using a nickname");
-                }
-            } else {
-                Bukkit.getConsoleSender().sendMessage("Player " + username + " is not using a nickname");
-            }
+            server.getConsoleSender().sendMessage("Player " + username + " is not using a nickname");
         }
     }
 }
