@@ -73,7 +73,7 @@ public class NicknameManager {
     }
 
     public String getPrefix(Player player) {
-        if (integration == "GroupManager" && plugin.getConfig().getBoolean("settings.useNickname")) {
+        if ("GroupManager".equals(integration) && plugin.getConfig().getBoolean("settings.useNickname")) {
             final AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(player);
 
             if (handler == null) {
@@ -81,7 +81,7 @@ public class NicknameManager {
             } else {
                 return handler.getUserPrefix(player.getName()).replace("&", "§");
             }
-        } else if (integration == "PermissionsEx" && plugin.getConfig().getBoolean("settings.useNickname")) {
+        } else if ("PermissionsEx".equals(integration) && plugin.getConfig().getBoolean("settings.useNickname")) {
             PermissionUser user = PermissionsEx.getUser(player);
 
             if (user == null) {
@@ -95,7 +95,7 @@ public class NicknameManager {
     }
 
     public String getSuffix(Player player) {
-        if (integration == "GroupManager" && plugin.getConfig().getBoolean("settings.useNickname")) {
+        if ("GroupManager".equals(integration) && plugin.getConfig().getBoolean("settings.useNickname")) {
             final AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(player);
 
             if (handler == null) {
@@ -103,7 +103,7 @@ public class NicknameManager {
             } else {
                 return handler.getUserSuffix(player.getName()).replace("&", "§");
             }
-        } else if (integration == "PermissionsEx" && plugin.getConfig().getBoolean("settings.useNickname")) {
+        } else if ("PermissionsEx".equals(integration) && plugin.getConfig().getBoolean("settings.useNickname")) {
             PermissionUser user = PermissionsEx.getUser(player);
 
             if (user == null) {

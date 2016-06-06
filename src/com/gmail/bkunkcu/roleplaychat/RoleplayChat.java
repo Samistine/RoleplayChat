@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -49,10 +48,8 @@ public class RoleplayChat extends JavaPlugin implements Listener {
     public boolean hasPermission(Player player, String permission) {
         if (player == null) {
             return true;
-        } else if (player != null && player.hasPermission(permission)) {
-            return true;
         } else {
-            return false;
+            return player.hasPermission(permission);
         }
     }
 
@@ -107,7 +104,7 @@ public class RoleplayChat extends JavaPlugin implements Listener {
                     yml.load(file);
                 } catch (Exception e) {
                     getLogger().info("Couldn't load chat.yml files. Disabling plugin!");
-                    Bukkit.getPluginManager().disablePlugin(this);
+                    getServer().getPluginManager().disablePlugin(this);
                 }
 
                 for (String s : yml.getStringList(key + ".commands")) {

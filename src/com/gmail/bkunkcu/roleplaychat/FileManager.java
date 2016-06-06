@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -46,7 +45,7 @@ public class FileManager {
 
         getMirrors();
 
-        for (World world : Bukkit.getWorlds()) {
+        for (World world : plugin.getServer().getWorlds()) {
 
             if (!mirrors.containsKey(world.getName())) {
                 createWorldFile(world.getName());
@@ -56,7 +55,7 @@ public class FileManager {
     }
 
     private void getMirrors() {
-        for (World world : Bukkit.getWorlds()) {
+        for (World world : plugin.getServer().getWorlds()) {
 
             if (plugin.getConfig().get("settings.mirrors." + world.getName()) != null) {
 
@@ -86,7 +85,7 @@ public class FileManager {
             yml.load(file);
         } catch (Exception e) {
             plugin.getLogger().info("Couldn't load chat.yml file. Disabling plugin!");
-            Bukkit.getPluginManager().disablePlugin(plugin);
+            plugin.getServer().getPluginManager().disablePlugin(plugin);
         }
 
         for (String key : yml.getKeys(false)) {

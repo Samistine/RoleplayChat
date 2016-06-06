@@ -9,18 +9,14 @@ import org.bukkit.entity.Player;
 public class MessageBuilder {
 
     private RoleplayChat plugin;
-    YamlConfiguration yml = new YamlConfiguration();
+    private YamlConfiguration yml = new YamlConfiguration();
 
     public MessageBuilder(RoleplayChat plugin) {
         this.plugin = plugin;
     }
 
     public boolean isDefault(Player player) {
-        if (plugin.FileManager.modes.get(plugin.getExactWorld(player.getWorld().getName())).contains("default")) {
-            return true;
-        }
-
-        return false;
+        return plugin.FileManager.modes.get(plugin.getExactWorld(player.getWorld().getName())).contains("default");
     }
 
     public void sendMessage(Player player, String key, String message) {
@@ -45,13 +41,13 @@ public class MessageBuilder {
                 if (yml.getInt(key + ".radius") == -1) {
                     receiver.sendMessage(displayMessage);
                 } else if (yml.getInt(key + ".radius") == 0) {
-                    if (receiver.getWorld().getName() == player.getWorld().getName()) {
+                    if (receiver.getWorld() == player.getWorld()) {
                         receiver.sendMessage(displayMessage);
-                    } else if (receiver.getWorld().getName() != player.getWorld().getName() && plugin.FileManager.spy.contains(receiver.getName())) {
+                    } else if (receiver.getWorld() != player.getWorld() && plugin.FileManager.spy.contains(receiver.getName())) {
                         receiver.sendMessage("§8[SPY] §r" + displayMessage);
                     }
                 } else {
-                    if (receiver.getWorld().getName() == player.getWorld().getName()) {
+                    if (receiver.getWorld() == player.getWorld()) {
                         double distance = player.getLocation().distance(receiver.getLocation());
 
                         if (distance <= yml.getInt(key + ".radius")) {
@@ -59,7 +55,7 @@ public class MessageBuilder {
                         } else if (distance > yml.getInt(key + ".radius") && plugin.FileManager.spy.contains(receiver.getName())) {
                             receiver.sendMessage("§8[SPY] §r" + displayMessage);
                         }
-                    } else if (receiver.getWorld().getName() != player.getWorld().getName() && plugin.FileManager.spy.contains(receiver.getName())) {
+                    } else if (receiver.getWorld() != player.getWorld() && plugin.FileManager.spy.contains(receiver.getName())) {
                         receiver.sendMessage("§8[SPY] §r" + displayMessage);
                     }
                 }
