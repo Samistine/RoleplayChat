@@ -13,13 +13,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import java.io.IOException;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 public class FileManager {
 
-    private RoleplayChat plugin;
-    public List<String> spy = new ArrayList<String>();
-    public Multimap<String, String> modes = ArrayListMultimap.create();
-    public HashMap<String, String> mirrors = new HashMap<String, String>();
+    private final RoleplayChat plugin;
+    public final List<String> spy = new ArrayList<>();
+    public final Multimap<String, String> modes = ArrayListMultimap.create();
+    public final HashMap<String, String> mirrors = new HashMap<>();
 
     public FileManager(RoleplayChat plugin) {
         this.plugin = plugin;
@@ -48,7 +50,6 @@ public class FileManager {
         for (World world : plugin.getServer().getWorlds()) {
 
             if (!mirrors.containsKey(world.getName())) {
-                createWorldFile(world.getName());
                 getModes(world.getName());
             }
         }
@@ -66,24 +67,19 @@ public class FileManager {
         }
     }
 
-    private void createWorldFile(String world) {
+    private void getModes(String world) {
         File folder = new File(plugin.getDataFolder(), world);
-        File file = new File(plugin.getDataFolder(), world + "/chat.yml");
+        File file = new File(folder, "chat.yml");
 
         if (!file.exists()) {
-            plugin.getDataFolder().mkdir();
-            folder.mkdir();
+            folder.mkdirs();
             copy(plugin.getResource("chat.yml"), file);
         }
-    }
 
-    private void getModes(String world) {
-        File file = new File(plugin.getDataFolder(), world + "/chat.yml");
         YamlConfiguration yml = new YamlConfiguration();
-
         try {
             yml.load(file);
-        } catch (Exception e) {
+        } catch (IOException | InvalidConfigurationException e) {
             plugin.getLogger().info("Couldn't load chat.yml file. Disabling plugin!");
             plugin.getServer().getPluginManager().disablePlugin(plugin);
         }
@@ -95,14 +91,15 @@ public class FileManager {
 
     private void copy(InputStream in, File file) {
         try {
-            OutputStream out = new FileOutputStream(file);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            try (OutputStream out = new FileOutputStream(file)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                in.close();
             }
-            out.close();
-            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

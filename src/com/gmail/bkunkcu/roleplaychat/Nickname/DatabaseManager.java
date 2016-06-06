@@ -10,7 +10,7 @@ import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
 public class DatabaseManager {
 
-    private RoleplayChat plugin;
+    private final RoleplayChat plugin;
     private Connection connection;
     private Statement statement;
     private ResultSet resultset;

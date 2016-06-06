@@ -23,7 +23,7 @@ public class RoleplayChat extends JavaPlugin implements Listener {
     public DatabaseManager DatabaseManager = new DatabaseManager(this);
     public NicknameManager NicknameManager = new NicknameManager(this);
     public MessageBuilder MessageBuilder = new MessageBuilder(this);
-    public List<String> wordList = new ArrayList<String>();
+    public List<String> wordList = new ArrayList<>();
 
     YamlConfiguration yml = new YamlConfiguration();
     YamlConfiguration yml2 = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "filter.yml"));
