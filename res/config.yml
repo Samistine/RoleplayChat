@@ -3,11 +3,11 @@ settings:
   # If you are using an other plugin like EssentialsChat disable this.
   useNickname: true
   nicknamePrefix: '~'
-  
+
   logging:
     # Will RoleplayChat log to console
     console: true
-    
+
   mirrors:
     # Worlds listed here have their settings mirrored in their children.
     # The first element 'world' is the main worlds name, and is the parent world.
@@ -15,4 +15,23 @@ settings:
     # the same chat configurations as the parent.
     world:
     - world_nether
-    - world_the_end    
+    - world_the_end
+
+  badWords:
+    #If a player says any one of these words they will be kicked
+    - fuck
+    - shit
+    - nigger
+    - nigga
+    - asshole
+    - whore
+    - bitch
+    - cock
+    - cunt
+    - bastard
+    - dick
+    - prick
+    - pussy
+    - fu(k
+    - porno
+    - 3JA(ULATI0N

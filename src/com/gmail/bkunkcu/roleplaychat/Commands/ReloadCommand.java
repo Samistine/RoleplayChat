@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
-public class ReloadCommand implements RoleplayChatCommand {
+final class ReloadCommand implements RoleplayChatCommand {
 
     private final RoleplayChat plugin;
 
@@ -16,8 +16,8 @@ public class ReloadCommand implements RoleplayChatCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Player player, String[] args) {
-        plugin.FileManager.getFiles();
-        plugin.NicknameManager.getIntegration();
+
+        plugin.load();
 
         plugin.getLogger().info("RoleplayChat reloaded!");
         if (player != null) {

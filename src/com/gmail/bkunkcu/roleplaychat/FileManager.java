@@ -1,65 +1,48 @@
 package com.gmail.bkunkcu.roleplaychat;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import java.io.IOException;
-import org.bukkit.configuration.InvalidConfigurationException;
-
-public class FileManager {
+public final class FileManager {
 
     private final RoleplayChat plugin;
-    public final List<String> spy = new ArrayList<>();
-    public final Multimap<String, String> modes = ArrayListMultimap.create();
-    public final HashMap<String, String> mirrors = new HashMap<>();
+    private final LoadingCache<File, YamlConfiguration> yamlCache;
+    private final List<String> badWords;
+    private final HashMap<String, String> mirrors = new HashMap<>();
 
     public FileManager(RoleplayChat plugin) {
         this.plugin = plugin;
-    }
+        this.plugin.saveDefaultConfig();
 
-    public void getFiles() {
-        modes.clear();
-        mirrors.clear();
+        //Setup YamlCaching
+        this.yamlCache = CacheBuilder.newBuilder()
+                .concurrencyLevel(1)
+                .build(new CacheLoader<File, YamlConfiguration>() {
+                    @Override
+                    public YamlConfiguration load(File key) {
+                        return YamlConfiguration.loadConfiguration(key);
+                    }
+                }
+                );
 
-        File config = new File(plugin.getDataFolder(), "config.yml");
-        File config2 = new File(plugin.getDataFolder(), "filter.yml");
+        //Load BadWords
+        this.badWords = plugin.getConfig().getStringList("settings.badWords");
 
-        if (!config.exists()) {
-            plugin.getDataFolder().mkdir();
-            copy(plugin.getResource("config.yml"), config);
-        }
-
-        if (!config2.exists()) {
-            copy(plugin.getResource("filter.yml"), config2);
-        } else {
-            plugin.reloadConfig();
-        }
-
-        getMirrors();
-
+        //Load Mirrors
         for (World world : plugin.getServer().getWorlds()) {
-
-            if (!mirrors.containsKey(world.getName())) {
-                getModes(world.getName());
-            }
-        }
-    }
-
-    private void getMirrors() {
-        for (World world : plugin.getServer().getWorlds()) {
-
             if (plugin.getConfig().get("settings.mirrors." + world.getName()) != null) {
-
                 for (String mirrored : plugin.getConfig().getStringList("settings.mirrors." + world.getName())) {
                     mirrors.put(mirrored, world.getName());
                 }
@@ -67,8 +50,10 @@ public class FileManager {
         }
     }
 
-    private void getModes(String world) {
-        File folder = new File(plugin.getDataFolder(), world);
+    public YamlConfiguration getWorldConfig(World world) {
+        String worldName = mirrors.containsKey(world.getName()) ? mirrors.get(world.getName()) : world.getName();
+
+        File folder = new File(plugin.getDataFolder(), worldName);
         File file = new File(folder, "chat.yml");
 
         if (!file.exists()) {
@@ -76,17 +61,15 @@ public class FileManager {
             copy(plugin.getResource("chat.yml"), file);
         }
 
-        YamlConfiguration yml = new YamlConfiguration();
-        try {
-            yml.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            plugin.getLogger().info("Couldn't load chat.yml file. Disabling plugin!");
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
-        }
+        return yamlCache.getUnchecked(file);
+    }
 
-        for (String key : yml.getKeys(false)) {
-            modes.put(world, key);
-        }
+    public Collection<String> getCommands(World world) {
+        return getWorldConfig(world).getKeys(false);
+    }
+
+    public List<String> getBadWords() {
+        return badWords;
     }
 
     private void copy(InputStream in, File file) {

@@ -1,6 +1,6 @@
 name: RoleplayChat
-version: 1.0.9
-author: Bkunkcu
+version: 2.0.0
+authors: [Bkunkcu, Samistine]
 description: Light weight and useful chat customization plugin for RPG servers.
 
 main: com.gmail.bkunkcu.roleplaychat.RoleplayChat

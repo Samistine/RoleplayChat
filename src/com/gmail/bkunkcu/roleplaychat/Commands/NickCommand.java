@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
-public class NickCommand implements RoleplayChatCommand {
+final class NickCommand implements RoleplayChatCommand {
 
     private final RoleplayChat plugin;
 
@@ -32,7 +32,7 @@ public class NickCommand implements RoleplayChatCommand {
                     if (args[1].equalsIgnoreCase("off")) {
                         plugin.NicknameManager.removeNickname(player, player.getName());
                     } else {
-                        plugin.NicknameManager.setNickname(player, player.getName(), args[1]);
+                        plugin.NicknameManager.setNickname(sender, player.getName(), args[1]);
                     }
                 } else {
                     sender.sendMessage(ChatColor.DARK_RED + "Only players can use this command");
@@ -43,7 +43,7 @@ public class NickCommand implements RoleplayChatCommand {
                     if (args[2].equalsIgnoreCase("off")) {
                         plugin.NicknameManager.removeNickname(player, args[1]);
                     } else {
-                        plugin.NicknameManager.setNickname(player, args[1], args[2]);
+                        plugin.NicknameManager.setNickname(sender, args[1], args[2]);
                     }
                 } else {
                     sender.sendMessage(ChatColor.DARK_RED + "You don't have permissions to use this command");

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
 
-public class SpyCommand implements RoleplayChatCommand {
+final class SpyCommand implements RoleplayChatCommand {
 
     private final RoleplayChat plugin;
 
@@ -16,11 +16,11 @@ public class SpyCommand implements RoleplayChatCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Player player, String[] args) {
-        if (plugin.FileManager.spy.contains(player.getName())) {
-            plugin.FileManager.spy.remove(player.getName());
+        if (plugin.getPlayersSpying().contains(player.getUniqueId())) {
+            plugin.getPlayersSpying().remove(player.getUniqueId());
             player.sendMessage(ChatColor.GRAY + "Detoggled spy");
         } else {
-            plugin.FileManager.spy.add(player.getName());
+            plugin.getPlayersSpying().add(player.getUniqueId());
             player.sendMessage(ChatColor.GRAY + "Toggled spy");
         }
 

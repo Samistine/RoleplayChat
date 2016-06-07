@@ -1,6 +1,5 @@
 package com.gmail.bkunkcu.roleplaychat;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,27 +16,25 @@ import com.gmail.bkunkcu.roleplaychat.Commands.RoleplayChatCommandExecutor;
 import com.gmail.bkunkcu.roleplaychat.Nickname.DatabaseManager;
 import com.gmail.bkunkcu.roleplaychat.Nickname.NicknameManager;
 
-public class RoleplayChat extends JavaPlugin implements Listener {
+import java.util.UUID;
+import org.bukkit.World;
 
-    public FileManager FileManager = new FileManager(this);
-    public DatabaseManager DatabaseManager = new DatabaseManager(this);
-    public NicknameManager NicknameManager = new NicknameManager(this);
-    public MessageBuilder MessageBuilder = new MessageBuilder(this);
-    public List<String> wordList = new ArrayList<>();
+public final class RoleplayChat extends JavaPlugin implements Listener {
 
-    YamlConfiguration yml = new YamlConfiguration();
-    YamlConfiguration yml2 = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "filter.yml"));
+    private final List<UUID> playersSpying = new ArrayList<>();
+
+    public FileManager FileManager;
+    public DatabaseManager DatabaseManager;
+    public NicknameManager NicknameManager;
+    public MessageBuilder MessageBuilder;
+
+    YamlConfiguration yml2;
 
     @Override
     public void onEnable() {
+        load();
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("roleplaychat").setExecutor(new RoleplayChatCommandExecutor(this));
-
-        FileManager.getFiles();
-        DatabaseManager.open();
-        NicknameManager.getIntegration();
-
-        loadWords();
     }
 
     @Override
@@ -45,20 +42,16 @@ public class RoleplayChat extends JavaPlugin implements Listener {
         DatabaseManager.close();
     }
 
-    public boolean hasPermission(Player player, String permission) {
-        if (player == null) {
-            return true;
-        } else {
-            return player.hasPermission(permission);
-        }
+    public void load() {
+
+        this.MessageBuilder = new MessageBuilder(this);
+        this.NicknameManager = new NicknameManager(this);
+        this.DatabaseManager = new DatabaseManager(this);
+        this.FileManager = new FileManager(this);
     }
 
-    public String getExactWorld(String world) {
-        if (!FileManager.mirrors.containsKey(world)) {
-            return world;
-        } else {
-            return FileManager.mirrors.get(world);
-        }
+    public boolean hasPermission(Player player, String permission) {
+        return player == null || player.hasPermission(permission);
     }
 
     //Listeners
@@ -80,7 +73,7 @@ public class RoleplayChat extends JavaPlugin implements Listener {
         String chat = event.getMessage();
         String result = chat.replaceAll("[-+.^:,!*%$£|/]", "");
         String result2 = result.replaceAll(" ", "");
-        for (String sword : this.wordList) {
+        for (String sword : FileManager.getBadWords()) {
             if (result2.toLowerCase().contains(sword)) {
                 event.getPlayer().kickPlayer(ChatColor.AQUA + "Nope, thats not in my dictionary");
                 return;
@@ -89,7 +82,7 @@ public class RoleplayChat extends JavaPlugin implements Listener {
         //end swear filter
 
         Player player = event.getPlayer();
-        String world = getExactWorld(player.getWorld().getName());
+        World world = player.getWorld();
 
         String[] input = event.getMessage().split(" ", 2);
         String command = input[0].replace("/", "");
@@ -97,15 +90,9 @@ public class RoleplayChat extends JavaPlugin implements Listener {
         if (input.length != 1) {
             String message = input[1];
 
-            for (String key : FileManager.modes.get(world)) {
-                File file = new File(getDataFolder(), world + "/chat.yml");
+            for (String key : FileManager.getCommands(world)) {
 
-                try {
-                    yml.load(file);
-                } catch (Exception e) {
-                    getLogger().info("Couldn't load chat.yml files. Disabling plugin!");
-                    getServer().getPluginManager().disablePlugin(this);
-                }
+                YamlConfiguration yml = FileManager.getWorldConfig(player.getWorld());
 
                 for (String s : yml.getStringList(key + ".commands")) {
                     if (s.equalsIgnoreCase(command)) {
@@ -117,8 +104,8 @@ public class RoleplayChat extends JavaPlugin implements Listener {
         }
     }
 
-    public void loadWords() {
-        this.wordList = yml2.getStringList("Words");
+    public List<UUID> getPlayersSpying() {
+        return playersSpying;
     }
 
 }

@@ -10,7 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RoleplayChatCommandExecutor implements CommandExecutor {
+public final class RoleplayChatCommandExecutor implements CommandExecutor {
 
     private final RoleplayChat plugin;
     private final HashMap<String, RoleplayChatCommand> commands = new HashMap<>();
