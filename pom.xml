@@ -25,8 +25,12 @@
     </build>
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
     </repositories>
     <dependencies>
@@ -38,14 +42,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ru.tehkode</groupId>
-            <artifactId>PermissionsEx</artifactId>
-            <version>1.23.4</version>
-        </dependency>
-        <dependency>
-            <groupId>net.ess3</groupId>
-            <artifactId>GroupManager</artifactId>
-            <version>2.x-SNAPSHOT</version>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
