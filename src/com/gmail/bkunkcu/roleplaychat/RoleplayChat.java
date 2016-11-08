@@ -65,18 +65,6 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        // begin swear filter
-        String chat = event.getMessage();
-        String result = chat.replaceAll("[-+.^:,!*%$£|/]", "");
-        String result2 = result.replaceAll(" ", "");
-        for (String sword : FileManager.getBadWords()) {
-            if (result2.toLowerCase().contains(sword)) {
-                event.getPlayer().kickPlayer(ChatColor.AQUA + "Nope, thats not in my dictionary");
-                return;
-            }
-        }
-        //end swear filter
-
         final Player player = event.getPlayer();
         final World world = player.getWorld();
 
