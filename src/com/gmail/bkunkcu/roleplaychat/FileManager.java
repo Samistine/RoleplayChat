@@ -19,7 +19,6 @@ public final class FileManager {
 
     private final RoleplayChat plugin;
     private final LoadingCache<File, YamlConfiguration> yamlCache;
-    private final List<String> badWords;
     private final HashMap<String, String> mirrors = new HashMap<>();
 
     public FileManager(RoleplayChat plugin) {
@@ -36,9 +35,6 @@ public final class FileManager {
                     }
                 }
                 );
-
-        //Load BadWords
-        this.badWords = plugin.getConfig().getStringList("settings.badWords");
 
         //Load Mirrors
         for (World world : plugin.getServer().getWorlds()) {
