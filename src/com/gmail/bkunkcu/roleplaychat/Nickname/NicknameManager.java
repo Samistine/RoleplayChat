@@ -1,50 +1,32 @@
 package com.gmail.bkunkcu.roleplaychat.Nickname;
 
-import org.anjocaido.groupmanager.GroupManager;
-import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
-
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
+import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.Server;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.command.CommandSender;
 
 import com.gmail.bkunkcu.roleplaychat.RoleplayChat;
+
 import java.util.Optional;
 
 public final class NicknameManager {
 
     private final RoleplayChat plugin;
     private final Server server;
-    private GroupManager groupManager;
-    private String integration;
+    private boolean vault;
+    
+    private Chat chat;
 
     public NicknameManager(RoleplayChat plugin) {
         this.plugin = plugin;
         this.server = plugin.getServer();
 
-        final PluginManager pluginManager = plugin.getServer().getPluginManager();
-        final Plugin GMplugin = pluginManager.getPlugin("GroupManager");
-        final Plugin ECplugin = pluginManager.getPlugin("EssentialsChat");
-        final Plugin PEXplugin = pluginManager.getPlugin("PermissionsEx");
-
-        if (GMplugin != null && GMplugin.isEnabled()) {
-            integration = "GroupManager";
-            groupManager = (GroupManager) GMplugin;
-            plugin.getLogger().info("GroupManager found!");
-        }
-
-        if (ECplugin != null && ECplugin.isEnabled()) {
-            plugin.getLogger().info("EssentialsChat found!");
-        }
-
-        if (PEXplugin != null && PEXplugin.isEnabled()) {
-            integration = "PermissionsEx";
-            plugin.getLogger().info("PermissionsEx found!");
+        if (setupChat()) {
+            vault = true;
+            plugin.getLogger().info("Vault found and hooked!");
         }
     }
 
@@ -64,56 +46,18 @@ public final class NicknameManager {
     }
 
     public String getPrefix(Player player) {
-        if (plugin.getConfig().getBoolean("settings.useNickname")) {
-
-            switch (integration) {
-                case "GroupManager":
-                    final AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(player);
-
-                    if (handler == null) {
-                        return "";
-                    } else {
-                        return handler.getUserPrefix(player.getName()).replace("&", "§");
-                    }
-                case "PermissionsEx":
-                    PermissionUser user = PermissionsEx.getUser(player);
-
-                    if (user == null) {
-                        return "";
-                    } else {
-                        return user.getPrefix().replace("&", "§");
-                    }
-                default:
-                    return "";
-            }
-
+        if (vault) {
+            String prefix = chat.getPlayerPrefix(player);
+            return prefix;
         } else {
             return "";
         }
     }
 
     public String getSuffix(Player player) {
-        if (plugin.getConfig().getBoolean("settings.useNickname")) {
-            switch (integration) {
-                case "GroupManager":
-                    final AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(player);
-
-                    if (handler == null) {
-                        return "";
-                    } else {
-                        return handler.getUserSuffix(player.getName()).replace("&", "§");
-                    }
-                case "PermissionsEx":
-                    PermissionUser user = PermissionsEx.getUser(player);
-
-                    if (user == null) {
-                        return "";
-                    } else {
-                        return user.getSuffix().replace("&", "§");
-                    }
-                default:
-                    return "";
-            }
+        if (vault) {
+            String suffix = chat.getPlayerSuffix(player);
+            return suffix;
         } else {
             return "";
         }
@@ -168,6 +112,16 @@ public final class NicknameManager {
             sender.sendMessage("You are not using a nickname");
         } else {
             sender.sendMessage("Player " + ChatColor.GOLD + username + ChatColor.RESET + " is not using a nickname");
+        }
+    }
+    
+    private boolean setupChat() {
+        try {
+            RegisteredServiceProvider<Chat> rsp = server.getServicesManager().getRegistration(Chat.class);
+            chat = rsp.getProvider();
+            return chat != null;
+        } catch (NoClassDefFoundError ex) {
+            return false;
         }
     }
 }
