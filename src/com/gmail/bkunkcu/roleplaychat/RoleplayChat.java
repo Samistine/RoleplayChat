@@ -28,13 +28,11 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
     public NicknameManager NicknameManager;
     public MessageBuilder MessageBuilder;
 
-    YamlConfiguration yml2;
-
     @Override
     public void onEnable() {
         load();
-        getServer().getPluginManager().registerEvents(this, this);
-        getCommand("roleplaychat").setExecutor(new RoleplayChatCommandExecutor(this));
+        super.getServer().getPluginManager().registerEvents(this, this);
+        super.getCommand("roleplaychat").setExecutor(new RoleplayChatCommandExecutor(this));
     }
 
     @Override
@@ -43,7 +41,6 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
     }
 
     public void load() {
-
         this.MessageBuilder = new MessageBuilder(this);
         this.NicknameManager = new NicknameManager(this);
         this.DatabaseManager = new DatabaseManager(this);
@@ -57,12 +54,11 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
     //Listeners
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        String message = event.getMessage();
+        final Player player = event.getPlayer();
+        final String message = event.getMessage();
 
         if (MessageBuilder.isDefault(player)) {
             event.setCancelled(true);
-
             MessageBuilder.sendMessage(player, "default", message);
         }
     }
@@ -71,7 +67,7 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
     public void onCommand(PlayerCommandPreprocessEvent event) {
         // begin swear filter
         String chat = event.getMessage();
-        String result = chat.replaceAll("[-+.^:,!*%$£|/]", "");
+        String result = chat.replaceAll("[-+.^:,!*%$Â£|/]", "");
         String result2 = result.replaceAll(" ", "");
         for (String sword : FileManager.getBadWords()) {
             if (result2.toLowerCase().contains(sword)) {
@@ -81,19 +77,17 @@ public final class RoleplayChat extends JavaPlugin implements Listener {
         }
         //end swear filter
 
-        Player player = event.getPlayer();
-        World world = player.getWorld();
+        final Player player = event.getPlayer();
+        final World world = player.getWorld();
 
-        String[] input = event.getMessage().split(" ", 2);
-        String command = input[0].replace("/", "");
+        final String[] input = event.getMessage().split(" ", 2);
+        final String command = input[0].replace("/", "");
 
         if (input.length != 1) {
             String message = input[1];
 
             for (String key : FileManager.getCommands(world)) {
-
-                YamlConfiguration yml = FileManager.getWorldConfig(player.getWorld());
-
+                final YamlConfiguration yml = FileManager.getWorldConfig(player.getWorld());
                 for (String s : yml.getStringList(key + ".commands")) {
                     if (s.equalsIgnoreCase(command)) {
                         event.setCancelled(true);
